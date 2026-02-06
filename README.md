@@ -48,16 +48,14 @@ npm run dev
 # Done! Create tasks and drag them between columns
 ```
 
-**Detailed setup?** See [SETUP_GUIDE.md](./SETUP_GUIDE.md)
-
 ---
 
 ## 📊 Live Demo
 
 | Component | Link |
 |-----------|------|
-| **Frontend** | https://kanban-board.vercel.app |
-| **Backend API** | https://kanban-server.onrender.com/api |
+| **Frontend** | https://kanban-board-ivory-seven-72.vercel.app |
+| **Backend API** | https://kanban-server-x591.onrender.com/api |
 
 Try it: Create a task, drag it to "In Progress", refresh the page — data persists! ✨
 
@@ -117,6 +115,44 @@ Frontend (React)              Backend (Express)           Database (Supabase)
 
 ---
 
+## 📊 Database Schema
+
+### SQL Commands to Run in Supabase SQL Editor
+
+```sql
+-- Create tasks table
+CREATE TABLE IF NOT EXISTS tasks (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  title VARCHAR(255) NOT NULL,
+  description TEXT,
+  status VARCHAR(50) NOT NULL DEFAULT 'todo',
+  position INTEGER NOT NULL DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+
+-- Create index on status for faster queries
+CREATE INDEX IF NOT EXISTS idx_tasks_status ON tasks(status);
+
+-- Create index on position for ordering within columns
+CREATE INDEX IF NOT EXISTS idx_tasks_position ON tasks(position);
+
+-- Create activity log table (optional, for nice-to-have feature)
+CREATE TABLE IF NOT EXISTS activity_log (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  action VARCHAR(100) NOT NULL,
+  task_id UUID REFERENCES tasks(id) ON DELETE CASCADE,
+  details JSONB,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+**Table Structure**:
+- **tasks**: Stores all task data with status-based organization
+- **activity_log**: Tracks task history (optional feature)
+
+---
+
 ## 🔌 API Endpoints
 
 All endpoints are prefixed with `/api`:
@@ -169,10 +205,7 @@ curl -X POST http://localhost:5000/api/tasks \
 | Document | Purpose |
 |----------|---------|
 | **README.md** | Main documentation with features and troubleshooting |
-| **ARCHITECTURE.md** | Technical deep dive, design patterns, interview Q&A |
-| **SETUP_GUIDE.md** | Step-by-step local dev and production deployment |
 | **API_DOCUMENTATION.md** | Complete API reference with examples |
-| **CODE_OVERVIEW.md** | Quick code structure and function reference |
 
 ---
 
@@ -217,6 +250,20 @@ Separates business logic from HTTP logic. Makes testing easier and allows reusin
 
 ---
 
+
+## 🤝 Trade-offs Made
+
+| Trade-off | Decision | Why |
+|-----------|----------|-----|
+| State Management | No Redux/Zustand | Overkill for single board |
+| Styling | Inline styles | No CSS framework, cleaner code |
+| Drag Library | HTML5 native | Lightweight, fewer dependencies |
+| Auth | None | Out of scope, can add later |
+| Real-time Updates | Polling | Simpler than WebSockets |
+| Error Handling | Basic try-catch | Sufficient for MVP |
+
+---
+
 ## 🧪 Testing
 
 ### Manual Test Cases
@@ -236,6 +283,6 @@ This project is open source and available under the **MIT License**.
 
 <div align="center">
 
-**[🎯 See Live Demo](https://kanban-board.vercel.app)** • **[⭐ Star this repo!](https://github.com/shivani-thakur/kanban-board.git)**
+**[🎯 See Live Demo](https://kanban-board-ivory-seven-72.vercel.app)** • **[⭐ Star this repo!](https://github.com/shivani-thakur/kanban-board.git)**
 
 </div>
